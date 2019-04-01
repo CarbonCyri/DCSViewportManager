@@ -75,7 +75,8 @@ The generated MonitorConfig-file will be called *monitor_config_VPM.lua* and is 
 
 
 ## KNOWN ISSUES:
-
+I am currently missing the correct path for the cockpit-scripts (especially the *device_init.lua* file) for some aircrafts. This means that the kneeboard-position may not be applied to these aircrafts and may crash the program when trying to assign viewports for these aircrafts.
+The list incluedes: *FW-190D9, MIG-21BIS, BF-109K4, C-101, MIG-15BIS, L-39, YAK-52, CE-II, MIG19P*
 
 ## ROADMAP/WISHLIST:
 - add more Quality of Life to using the interface.
