@@ -10,4 +10,3 @@ viewport_airframe = []
 # Kneeboard
 kneeboard_enabled_airframes = []
 kneeboard_size = {'x': 000, 'y': 000, 'width': 600, 'height': 800}
-
