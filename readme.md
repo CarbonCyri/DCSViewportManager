@@ -20,6 +20,8 @@ The program is divided into four different parts:
 	c) creates modified files for each airframe selected for the kneeboard to be placed at the new position and size
 All these changes will pass the Integrety Check and therefore allow to play on multiplayer-servers.
 
+For Screenshots see: https://imgur.com/a/HNDSB31
+
 
 ## HOW DO I INSTALL DCS VIEWPORT MANAGER?
 
