@@ -8,16 +8,16 @@ This little programm is designed for DCS-Users, who use multiple monitors, espec
 
 The program is divided into four different parts:
 
-1) **Basic configuration** - here you'll need to setup the path to your *dcs_game-folder aswell* as to your *saved games\dcs* folder.
+- **Basic configuration** - here you'll need to setup the path to your *dcs_game-folder aswell* as to your *saved games\dcs* folder.
 
-2) **Vieport-management** - here you are able to select the current airframes inclueded in DCS and for each aircraft you can add multiple viewpors, storing their x- and y-position and their seize. All viewports for one aircraft will be stored and saved in a *.csv-file* for easy backup and sharing.
+- **Vieport-management** - here you are able to select the current airframes inclueded in DCS and for each aircraft you can add multiple viewpors, storing their x- and y-position and their seize. All viewports for one aircraft will be stored and saved in a *.csv-file* for easy backup and sharing.
 
-3) **Kneeboard-position** - here you can define a position and size for the ingame kneeboard to be displayed. additionally you can select for which aircraft the kneeboard should be displayed at this "new" position instead of the default one.
+- **Kneeboard-position** - here you can define a position and size for the ingame kneeboard to be displayed. additionally you can select for which aircraft the kneeboard should be displayed at this "new" position instead of the default one.
 
-4) **DCS-filepatche** - this is the final function which allows you to automatically apply the changes made in 2) and 3). This function will:
-    a) create a single MonitorConfig.lua file containing all the viewports stored in the *.csv-files*, seperated by their airframes (Viewportname = *AIRFRAME_VIEWPORTNAME*)
-    b) modifies the DEVICE_init.lua files for each device/viewport created to make their name "unique" (e.g. *F18C_RIGHT_MFCD* instead of *RIGHT_MFCD*)
-    c) creates modified files for each airframe selected for the kneeboard to be placed at the new position and size
+- **DCS-filepatche** - this is the final function which allows you to automatically apply the changes made in 2) and 3). This function will:
+	- create a single MonitorConfig.lua file containing all the viewports stored in the *.csv-files*, seperated by their airframes (Viewportname = *AIRFRAME_VIEWPORTNAME*)
+	- modifies the DEVICE_init.lua files for each device/viewport created to make their name "unique" (e.g. *F18C_RIGHT_MFCD* instead of *RIGHT_MFCD*)
+	- creates modified files for each airframe selected for the kneeboard to be placed at the new position and size
 All these changes will pass the Integrety Check and therefore allow to play on multiplayer-servers.
 
 For Screenshots see: https://imgur.com/a/HNDSB31
@@ -78,6 +78,7 @@ The generated MonitorConfig-file will be called *monitor_config_VPM.lua* and is 
 
 ## KNOWN ISSUES:
 I am currently missing the correct path for the cockpit-scripts (especially the *device_init.lua* file) for some aircrafts. This means that the kneeboard-position may not be applied to these aircrafts and may crash the program when trying to assign viewports for these aircrafts.
+
 The list incluedes: *FW-190D9, MIG-21BIS, BF-109K4, C-101, MIG-15BIS, L-39, YAK-52, CE-II, MIG19P*
 
 ## ROADMAP/WISHLIST:
