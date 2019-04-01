@@ -84,5 +84,5 @@ The generated MonitorConfig-file will be called *monitor_config_VPM.lua* and is 
 
 
 ## Note:
-I never had any advanced course to learn coding - instead I taught everything I know about coding by myself. Therefore the code isn't the prettiest and might contain some bugs, especially since there is no foolprove included (yet), so make sure to enter valid data.
+I never had any advanced courses to learn coding - instead I taught everything I know about coding by myself. Therefore the code isn't the prettiest and might contain some bugs, especially since there is no foolprove included (yet), so make sure to enter valid data.
 If you want to contribute to this project feel free to message me.
