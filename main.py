@@ -470,7 +470,7 @@ class ViewportPage(Frame):
         spacer = Label(edit_vp_frame, text="")
         spacer.grid(row=2, column=0, sticky=W, columnspan=4)
 
-        vp_file_title = Label(edit_vp_frame, text="File containing viewport:")
+        vp_file_title = Label(edit_vp_frame, text="init.lua File containing viewport:")
         vp_file_cur = Label(edit_vp_frame, text=viewport['filepath'])
         vp_file_save = Button(edit_vp_frame, text="Choose", command=lambda vp=viewport, label=vp_file_cur: self.chose_vp_file(vp, label))
 
@@ -644,7 +644,7 @@ class ViewportPage(Frame):
         vp_name_save.grid(row=2, column=3, sticky='nesw')
         fields.append(vp_name_cur)
 
-        vp_file_label = Label(add_vp_frame, text="File:")
+        vp_file_label = Label(add_vp_frame, text="init.lua File:")
         vp_file_cur = Label(add_vp_frame, text="no file selected")
         vp_file_save = Button(add_vp_frame, text="Choose", command=lambda: self.addviewport_choosefile(vp_file_cur, airframe))
 
