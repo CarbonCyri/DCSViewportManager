@@ -1,0 +1,36 @@
+<component name="ProjectDictionaryState">
+  <dictionary name="nicla">
+    <words>
+      <w>buttondcsconfig</w>
+      <w>dcsconfigbutton</w>
+      <w>dcsconfiglabel</w>
+      <w>dcsconfigspacer</w>
+      <w>dcsframe</w>
+      <w>dcslabel</w>
+      <w>dcspathtitle</w>
+      <w>dcssetup</w>
+      <w>dcstitle</w>
+      <w>dcstitlespacer</w>
+      <w>framevariables</w>
+      <w>kneeboard</w>
+      <w>kneeboardconfigbutton</w>
+      <w>kneeboardconfiglabel</w>
+      <w>kneeboardconfigspacer</w>
+      <w>kneeboardposition</w>
+      <w>mpframe</w>
+      <w>mptitle</w>
+      <w>mptitlelabel</w>
+      <w>mptitlespacer</w>
+      <w>patchdcs</w>
+      <w>patchdcsbutton</w>
+      <w>quitbutton</w>
+      <w>savedgames</w>
+      <w>textfields</w>
+      <w>viewportconfigbutton</w>
+      <w>viewportconfiglabel</w>
+      <w>viewportconfigspacer</w>
+      <w>xstart</w>
+      <w>ystart</w>
+    </words>
+  </dictionary>
+</component>

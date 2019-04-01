@@ -1,0 +1,4 @@
+name,filepath,x,y,width,height
+RADAR,Mods/aircraft/AJS37/Cockpit/scripts/radar/Indicator/init.lua,0,1440,1080,1080
+TV,Mods/aircraft/AJS37/Cockpit/scripts/TV-Indicator/Indicator/init.lua,1200,1440,600,600
+WAYPOINT,Mods/aircraft/AJS37/Cockpit/scripts/Destination/Indicator/init.lua,900,1440,150,100

@@ -1,0 +1,7 @@
+name,filepath,x,y,width,height
+IFEI,Mods/aircraft/FA-18C/Cockpit/Scripts/IFEI/indicator/IFEI_init.lua,152,2196,528,200
+UFC,Mods/aircraft/FA-18C/Cockpit/Scripts/UFC/indicator/UFC_init.lua,743,1470,451,258
+CENTER_MFCD,Mods/aircraft/FA-18C/Cockpit/Scripts/Multipurpose_Display_Group/AMPCD/indicator/AMPCD_init.lua,770,2128,376,358
+RWR,Mods/aircraft/FA-18C/Cockpit/Scripts/TEWS/indicator/RWR_ALR67_init.lua,1493,2160,178,177
+RIGHT_MFCS,Mods/aircraft/FA-18C/Cockpit/Scripts/Multipurpose_Display_Group/MDI_IP1556A/indicator/MDI_right_init.lua,1258,1637,387,374
+LEFT_MFCS,Mods/aircraft/FA-18C/Cockpit/Scripts/Multipurpose_Display_Group/MDI_IP1556A/indicator/MDI_left_init.lua,280,1637,387,374
