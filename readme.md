@@ -82,6 +82,9 @@ The list incluedes: *FW-190D9, MIG-21BIS, BF-109K4, C-101, MIG-15BIS, L-39, YAK-
 
 ## ROADMAP/WISHLIST:
 - add more Quality of Life to using the interface.
+	- add variable validation to all textfields
+	- add confirmation popups when closing/deleting
+- add HUD/MFCD line-thickness and -fuzziness for FA-18C
 - add support of FC3-viewports (problem here is that they are all called either *LEFT_MFCD* or *RIGHT_MFCD* and I haven't found a way yet to adjust the name for each different aircraft)
 - add propper support of viewport-templates for profile-creators that will easiely adjust the coordinates and sizes of viewports to different monitor-setups and -resolutions.
 
