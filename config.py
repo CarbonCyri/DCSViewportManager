@@ -1,13 +1,13 @@
 # Config Variables
 
-first_run = False
-dcs_Path = r'D:/Games/DCS World/bin/'
-savedgames_Path = r'E:/Daten/Niclas/Owncloud/Saved Games/DCS/'
+first_run = True
+dcs_Path = r'C:/Program Files/Eagle Dynamics/DCS World/'
+savedgames_Path = r'C:/User/NAME/Saved Games/DCS/'
 
 # Viewport
-viewport_airframe = ['FA-18C', 'Ka-50', 'M-2000C', 'AJS37', 'A-10C', 'AV8BNA', 'F14']
+viewport_airframe = []
 
 # Kneeboard
 kneeboard_enabled_airframes = []
-kneeboard_size = {'x': 1700, 'y': 600, 'width': 600, 'height': 800}
+kneeboard_size = {'x': 000, 'y': 000, 'width': 600, 'height': 800}
 
