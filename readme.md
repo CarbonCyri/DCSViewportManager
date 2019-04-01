@@ -15,9 +15,9 @@ The program is divided into four different parts:
 3) **Kneeboard-position** - here you can define a position and size for the ingame kneeboard to be displayed. additionally you can select for which aircraft the kneeboard should be displayed at this "new" position instead of the default one.
 
 4) **DCS-filepatche** - this is the final function which allows you to automatically apply the changes made in 2) and 3). This function will:
-	a) create a single MonitorConfig.lua file containing all the viewports stored in the *.csv-files*, seperated by their airframes (Viewportname = *AIRFRAME_VIEWPORTNAME*)
-	b) modifies the DEVICE_init.lua files for each device/viewport created to make their name "unique" (e.g. *F18C_RIGHT_MFCD* instead of *RIGHT_MFCD*)
-	c) creates modified files for each airframe selected for the kneeboard to be placed at the new position and size
+    a) create a single MonitorConfig.lua file containing all the viewports stored in the *.csv-files*, seperated by their airframes (Viewportname = *AIRFRAME_VIEWPORTNAME*)
+    b) modifies the DEVICE_init.lua files for each device/viewport created to make their name "unique" (e.g. *F18C_RIGHT_MFCD* instead of *RIGHT_MFCD*)
+    c) creates modified files for each airframe selected for the kneeboard to be placed at the new position and size
 All these changes will pass the Integrety Check and therefore allow to play on multiplayer-servers.
 
 For Screenshots see: https://imgur.com/a/HNDSB31
