@@ -66,7 +66,7 @@ kneeboard_paths = {
 # Viewport-Exceptions
 ###########################
 
-vp_exeptions = [
+vp_exceptions = [
     "Mods/aircraft/AV8BNA/Cockpit/MPCD/indicator/MPCD_init.lua"
 ]
 

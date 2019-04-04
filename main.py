@@ -8,35 +8,54 @@ from CockpitScriptsAdjust import write_init_luas
 import tkinter.messagebox
 import csv
 import os
+import ctypes.wintypes
 
+# Variables for window size and spacing
 endrow = round(len(dcs_current_airframes) / 2) + 5
 homewidth = 4
 savecol = 5
 columnsize = 75
 rowsize = 25
 
+# Look for folder in User\Documents, if not existent, create them
+CSIDL_PERSONAL = 5       # My Documents
+SHGFP_TYPE_CURRENT = 0   # Get current, not default value
+buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
+ctypes.windll.shell32.SHGetFolderPathW(None, CSIDL_PERSONAL, None, SHGFP_TYPE_CURRENT, buf)
+user_path = buf.value.replace('\\', '/') + '/DCS ViewportManager/'
+user_profile_path = user_path + 'profiles/'
+user_template_path = user_path + 'templates/'
 
-# import csv-files
+if not os.path.isdir(user_path):
+    os.mkdir(user_path)
+if not os.path.isdir(user_profile_path):
+    os.mkdir(user_profile_path)
+if not os.path.isdir(user_template_path):
+    os.mkdir(user_template_path)
+
+# import .csv-files
 # Center Viewport
 mainViewport = []
 try:
-    reader = csv.DictReader(open("mainViewport.csv", "r", encoding="utf8"))
-    for line in reader:
-        mainViewport.append(line)
-except:
+    with open(user_profile_path + "mainViewport.csv", "r", encoding="utf8") as readerfile:
+        reader = csv.DictReader(readerfile)
+        for line in reader:
+            mainViewport.append(line)
+except OSError as e:
     mainViewport.append([('name', 'Center'), ('x', '0'), ('y', '0'), ('width', '1920'), ('height', '1080'), ('viewDx', '0'), ('viewDy', '0'), ('aspect', '16/9')])
 
 # Airframe Viewports
 viewport_list = []
-for airframe in viewport_airframe:
+for vp_airframe in viewport_airframe:
     try:
-        reader = csv.DictReader(open("%s.csv" % airframe, "r", encoding="utf8"))
-        viewports = []
-        for line in reader:
-            viewports.append(line)
-        viewport_list.append({'airframe': airframe, 'viewports': viewports})
-    except:
-        viewport_list.append({'airframe': airframe, 'viewports': []})
+        with open(user_profile_path + "%s.csv" % vp_airframe, "r", encoding="utf8") as vp_file:
+            reader = csv.DictReader(vp_file)
+            viewports = []
+            for line in reader:
+                viewports.append(line)
+            viewport_list.append({'airframe': vp_airframe, 'viewports': viewports})
+    except OSError as e:
+        viewport_list.append({'airframe': vp_airframe, 'viewports': []})
 
 
 # Application
@@ -395,7 +414,7 @@ class ViewportPage(Frame):
         tocsv = mainViewport
         keys = tocsv[0].keys()
 
-        with open("mainViewport.csv", "w", encoding="utf8") as output_file:
+        with open(user_profile_path + "mainViewport.csv", "w", encoding="utf8") as output_file:
             dict_writer = csv.DictWriter(output_file, keys)
             dict_writer.writeheader()
             dict_writer.writerows(tocsv)
@@ -570,7 +589,7 @@ class ViewportPage(Frame):
             tkinter.messagebox.showinfo("DCS Viewport Manager", "Invalid Path. Make sure you did setup the corrent DCS-Path on the mainpage and try again")
             return
 
-        if final_path in vp_exeptions:
+        if final_path in vp_exceptions:
             tkinter.messagebox.showinfo("DCS Viewport Manager", vp_ecep_hint[final_path])
 
         viewport['filepath'] = final_path
@@ -585,13 +604,15 @@ class ViewportPage(Frame):
                     tocsv = airframetwo['viewports']
                     keys = tocsv[0].keys()
 
-                    with open("%s.csv" % airframetwo['airframe'], "w", encoding="utf8") as output_file:
+                    with open(user_profile_path + "%s.csv" % airframetwo['airframe'], "w", encoding="utf8") as output_file:
                         dict_writer = csv.DictWriter(output_file, keys)
                         dict_writer.writeheader()
                         dict_writer.writerows(tocsv)
-                    successlist += "%s, " % airframetwo['airframe']
+                    successlist += "\n%s," % airframetwo['airframe']
                 except PermissionError:
                     tkinter.messagebox.showinfo("DCS Viewport Manager", "ERROR: Could not save viewports for %s. Make sure the .csv file is not opened." % airframetwo['airframe'])
+        if len(successlist) > 0:
+            successlist = successlist[:-1]
 
         # Make changes to config.py
         va_string = ""
@@ -732,7 +753,7 @@ class ViewportPage(Frame):
             tkinter.messagebox.showinfo("DCS Viewport Manager", "Invalid Path. Make sure you did setup the corrent DCS-Path on the mainpage and try again")
             return
 
-        if final_path in vp_exeptions:
+        if final_path in vp_exceptions:
             tkinter.messagebox.showinfo("DCS Viewport Manager", vp_ecep_hint[final_path])
         label['text'] = final_path
 
@@ -856,7 +877,7 @@ class KneeboardPage(Frame):
         valuefield.delete(0, END)
 
     def savechanges(self, kneeboard, airframelist):
-        kneeboardvar = {}
+        kneeboardvar = dict()
         kneeboardvar['x'] = kneeboard[0]['text']
         kneeboardvar['y'] = kneeboard[1]['text']
         kneeboardvar['width'] = kneeboard[2]['text']
@@ -900,6 +921,7 @@ class KneeboardPage(Frame):
         tkinter.messagebox.showinfo("DCS Viewport Manager", "Saved Changes made to the Kneeboard.\nClick Patch DCS on the Home-Page to apply changes.")
 
 
+# Build App and start mainloop()
 app = App()
 app.mainloop()
 

@@ -14,7 +14,8 @@ def write_init_luas(viewport_list):
             open_file.close()
 
             # Find Specific Lines
-            if port['filepath'] in vp_exeptions:
+            # If in exceptions
+            if port['filepath'] in vp_exceptions:
                 if port['filepath'] == "Mods/aircraft/AV8BNA/Cockpit/MPCD/indicator/MPCD_init.lua":
                     pos = 0
                     for i in range(len(data)):
@@ -26,18 +27,20 @@ def write_init_luas(viewport_list):
                         data[pos + 3] = '	try_find_assigned_viewport("%s_%s")\n' % (airframe_name, port['name'])
 
             else:
-                found_vp_handling = False
+                vph_line = 0
+                vpa_line = 0
                 for i in range(len(data)):
-                    if data[i].startswith('dofile(LockOn_Options.common_script_path.."ViewportHandling.lua")'):
-                        found_vp_handling = True
+                    if 'dofile(LockOn_Options.common_script_path.."ViewportHandling.lua")' in data[i]:
+                        vph_line = i
+                    elif 'try_find_assigned_viewport(' in data[i]:
+                        vpa_line = i
 
-                    elif data[i].startswith('try_find_assigned_viewport('):
-                        if found_vp_handling:
-                            data[i] = 'try_find_assigned_viewport("%s_%s")\n' % (airframe_name, port['name'])
-                            break
-                        else:
-                            data[i] = 'dofile(LockOn_Options.common_script_path.."ViewportHandling.lua")\ntry_find_assigned_viewport("%s_%s")\n' % (airframe_name, port['name'])
-                            break
+                if vph_line <= 0:
+                    data.append('\n\ndofile(LockOn_Options.common_script_path.."ViewportHandling.lua")\n')
+                if vpa_line <= 0:
+                    data.append('\ntry_find_assigned_viewport("%s_%s")\n' % (airframe_name, port['name']))
+                else:
+                    data[vpa_line] = 'try_find_assigned_viewport("%s_%s")\n' % (airframe_name, port['name'])
 
             # Write data
             with open(file, 'w', encoding="utf8") as file2:
