@@ -39,7 +39,7 @@ The next step is to download this program: https://github.com/Alaeya/DCSViewport
 Download the .zip-archive and extract it into a folder of your choice.
 
 
-## WHERE ARE MY PROFILES STORED / DO I HAVE TO SAVE PREMADE TEMPLATES?
+## WHERE ARE MY PROFILES STORED / WHERE DO I HAVE TO SAVE PREMADE TEMPLATES?
 
 Your (viewport)profiles will be stored in YOURUSER\Documents\DCS ViewportManager\profiles, premade templates (not implemented yet) are loaded and stored in YOURUSER\Documents\DCS ViewportManager\templates
 
