@@ -39,7 +39,7 @@ The next step is to download this program: https://github.com/Alaeya/DCSViewport
 Download the .zip-archive and extract it into a folder of your choice.
 
 
-## WHERE ARE MY PROFILES STORED / DO I HAVE TO SAVE PREMADE TEMPLATES?
+## WHERE ARE MY PROFILES STORED / WHERE DO I HAVE TO SAVE PREMADE TEMPLATES?
 
 Your (viewport)profiles will be stored in YOURUSER\Documents\DCS ViewportManager\profiles, premade templates (not implemented yet) are loaded and stored in YOURUSER\Documents\DCS ViewportManager\templates
 
@@ -84,7 +84,7 @@ The generated MonitorConfig-file will be called *monitor_config_VPM.lua* and is 
 ## KNOWN ISSUES:
 I am currently missing the correct path for the cockpit-scripts (especially the *device_init.lua* file) for some aircrafts. This means that the kneeboard-position may not be applied to these aircrafts and may crash the program when trying to assign viewports for these aircrafts.
 
-The list incluedes: *FW-190D9, MIG-21BIS, BF-109K4, C-101, MIG-15BIS, L-39, YAK-52, CE-II, MIG19P*
+The list incluedes: *MIG19P*
 
 ## ROADMAP/WISHLIST:
 - add more Quality of Life to using the interface.
@@ -92,7 +92,7 @@ The list incluedes: *FW-190D9, MIG-21BIS, BF-109K4, C-101, MIG-15BIS, L-39, YAK-
 	- add confirmation popups when closing/deleting
 - add HUD/MFCD line-thickness and -fuzziness for FA-18C
 - add support of FC3-viewports (problem here is that they are all called either *LEFT_MFCD* or *RIGHT_MFCD* and I haven't found a way yet to adjust the name for each different aircraft)
-- add propper support of viewport-templates for profile-creators that will easiely adjust the coordinates and sizes of viewports to different monitor-setups and -resolutions.
+~~- add propper support of viewport-templates for profile-creators that will easiely adjust the coordinates and sizes of viewports to different monitor-setups and -resolutions.~~ (done)
 
 
 ## Note:
