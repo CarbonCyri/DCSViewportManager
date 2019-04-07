@@ -19,13 +19,14 @@ def write_init_luas(viewport_list):
                 if port['filepath'] == "Mods/aircraft/AV8BNA/Cockpit/MPCD/indicator/MPCD_init.lua":
                     pos = 0
                     for i in range(len(data)):
-                        if data[i].startswith('if monitorpos == 'R' then'):
+                        if "if monitorpos == 'R' then" in data[i]:
                             pos = i
                     if pos != 0 and "RIGHT" in port['name'].upper():
                         data[pos + 1] = '	try_find_assigned_viewport("%s_%s")\n' % (airframe_name, port['name'])
                     elif pos != 0 and "LEFT" in port['name'].upper():
                         data[pos + 3] = '	try_find_assigned_viewport("%s_%s")\n' % (airframe_name, port['name'])
 
+            # If normal file
             else:
                 vph_line = 0
                 vpa_line = 0

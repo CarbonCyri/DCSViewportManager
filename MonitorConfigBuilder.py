@@ -1,17 +1,16 @@
 from config import *
-from dcs_variables import *
 
 
 def write_monitor_config(main_viewport, viewport_list):
     config_path = "Config/MonitorSetup/"
     monitorconfig_file = dcs_Path + config_path + "monitor_config_VPM.lua"
 
-    data = []
+    data = list()
     data.append("_  = function(p) return p; end;\n")
     data.append("name = _('monitor_config_VPM');\n")
     data.append("Description = 'Monitor-Config created by ViewportManager'\n\n")
 
-    # Main Viewport
+    # Write Main Viewport
     data.append("--########################################\n")
     data.append("-- MAIN VIEWPORT\n")
     data.append("--########################################\n\n")
@@ -29,14 +28,15 @@ def write_monitor_config(main_viewport, viewport_list):
     data.append("    }\n")
     data.append("}\n\n")
 
-    # Viewports per airframe
+    # Write Viewports per airframe
     for item in viewport_list:
         airframe_name = item['airframe'].replace("-", "_").replace(" ", "_")
-        data.append("--########################################\n")
+        data.append("\n--################################################################################\n")
         data.append("-- %s\n" % airframe_name)
-        data.append("--########################################\n\n")
+        data.append("--################################################################################\n\n")
 
         for port in item['viewports']:
+            data.append("-- %s\n" % port['filepath'])
             data.append("%s_%s =\n" % (airframe_name, port['name']))
             data.append("{\n")
             data.append("    x = %s;\n" % port['x'])

@@ -12,8 +12,9 @@ def write_new_kneeboard(kneeboardlist):
     file.close()
 
     for i in range(len(vph_data)):
-        if vph_data[i].startswith('	dedicated_viewport 		  = '):
+        if 'dedicated_viewport ' in vph_data[i]:
             vph_data[i] = '	dedicated_viewport 		  = {%s, %s, %s, %s}\n' % (kneeboard_size['x'], kneeboard_size['y'], kneeboard_size['width'], kneeboard_size['height'])
+            break
 
     newfile = vph_path.replace("ViewportHandling.lua", "ViewportHandling_VPM.lua")
     with open(newfile, 'w', encoding="utf8") as file2:
@@ -27,8 +28,9 @@ def write_new_kneeboard(kneeboardlist):
     file3.close()
 
     for i in range(len(kbi_data)):
-        if kbi_data[i].startswith('dofile(LockOn_Options.common_script_path.."ViewportHandling.lua")'):
+        if 'dofile(LockOn_Options.common_script_path.."ViewportHandling.lua")' in kbi_data[i]:
             kbi_data[i] = 'dofile(LockOn_Options.common_script_path.."ViewportHandling_VPM.lua")\n'
+            break
 
     newfile = kbi_path.replace("init.lua", "init_VPM.lua")
     with open(newfile, 'w', encoding="utf8") as file4:
@@ -42,8 +44,9 @@ def write_new_kneeboard(kneeboardlist):
     file5.close()
 
     for i in range(len(kbd_data)):
-        if kbd_data[i].startswith('local 			init_script = LockOn_Options.common_script_path.."KNEEBOARD/indicator/init'):
+        if '"KNEEBOARD/indicator/init.lua"' in kbd_data[i]:
             kbd_data[i] = 'local 			init_script = LockOn_Options.common_script_path.."KNEEBOARD/indicator/init_VPM.lua"\n'
+            break
 
     newfile = kbd_path.replace("declare_kneeboard_device.lua", "declare_kneeboard_device_VPM.lua")
     with open(newfile, 'w', encoding="utf8") as file6:
@@ -62,8 +65,9 @@ def write_new_kneeboard(kneeboardlist):
         file7.close()
 
         for i in range(len(data)):
-            if data[i].startswith('dofile(LockOn_Options.common_script_path.."KNEEBOARD/declare_kneeboard_device.lua")'):
+            if 'dofile(LockOn_Options.common_script_path.."KNEEBOARD/declare_kneeboard_device.lua")' in data[i]:
                 data[i] = 'dofile(LockOn_Options.common_script_path.."KNEEBOARD/declare_kneeboard_device_VPM.lua")\n'
+                break
 
         with open(path, 'w', encoding="utf8") as file8:
             for line in data:
