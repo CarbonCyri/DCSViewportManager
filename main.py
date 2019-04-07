@@ -1,4 +1,3 @@
-from config import *
 from dcs_variables import *
 from tkinter import filedialog
 from tkinter import *
@@ -9,6 +8,44 @@ import tkinter.messagebox
 import csv
 import os
 import ctypes.wintypes
+
+# Look for folder in User\Documents, if not existent, create them
+CSIDL_PERSONAL = 5       # My Documents
+SHGFP_TYPE_CURRENT = 0   # Get current, not default value
+buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
+ctypes.windll.shell32.SHGetFolderPathW(None, CSIDL_PERSONAL, None, SHGFP_TYPE_CURRENT, buf)
+user_path = buf.value.replace('\\', '/')
+user_path_vpm = buf.value.replace('\\', '/') + '/DCS ViewportManager/'
+user_profile_path = user_path_vpm + 'profiles/'
+user_template_path = user_path_vpm + 'templates/'
+
+if not os.path.isdir(user_path_vpm):
+    os.mkdir(user_path_vpm)
+if not os.path.isdir(user_profile_path):
+    os.mkdir(user_profile_path)
+if not os.path.isdir(user_template_path):
+    os.mkdir(user_template_path)
+
+# load config.py, else create default config file
+try:
+    from config import *
+except ModuleNotFoundError:
+    data = list()
+
+    data.append("# Config Variables\n\n")
+    data.append("first_run = True\n")
+    data.append("dcs_Path = r'C:/Program Files/Eagle Dynamics/DCS World/'\n")
+    data.append("savedgames_Path = r'%s/Saved Games/DCS/'\n" % user_path)
+    data.append("\n# Viewport\n")
+    data.append("viewport_airframe = []\n")
+    data.append("\n# Kneeboard\n")
+    data.append("kneeboard_enabled_airframes = []\n")
+    data.append("kneeboard_size = {'x': 0, 'y': 0, 'width': 600, 'height': 800}\n")
+
+    with open("config.py", "w", encoding="utf8") as file:
+        file.writelines(data)
+    from config import *
+
 
 to_del = list()
 # check for old names in config
@@ -29,23 +66,6 @@ rowsize = 25
 button_green = "#ADFF2F"
 button_red = "#D9534F"
 button_blue = "#ADD8E6"
-
-
-# Look for folder in User\Documents, if not existent, create them
-CSIDL_PERSONAL = 5       # My Documents
-SHGFP_TYPE_CURRENT = 0   # Get current, not default value
-buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
-ctypes.windll.shell32.SHGetFolderPathW(None, CSIDL_PERSONAL, None, SHGFP_TYPE_CURRENT, buf)
-user_path = buf.value.replace('\\', '/') + '/DCS ViewportManager/'
-user_profile_path = user_path + 'profiles/'
-user_template_path = user_path + 'templates/'
-
-if not os.path.isdir(user_path):
-    os.mkdir(user_path)
-if not os.path.isdir(user_profile_path):
-    os.mkdir(user_profile_path)
-if not os.path.isdir(user_template_path):
-    os.mkdir(user_template_path)
 
 # import .csv-files
 # Center Viewport

@@ -1,6 +1,3 @@
-from config import *
-
-
 def write_monitor_config(main_viewport, viewport_list):
     config_path = "Config/MonitorSetup/"
     monitorconfig_file = dcs_Path + config_path + "monitor_config_VPM.lua"

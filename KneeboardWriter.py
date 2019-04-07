@@ -1,4 +1,3 @@
-from config import *
 from dcs_variables import *
 import os
 
