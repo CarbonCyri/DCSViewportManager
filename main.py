@@ -1,14 +1,14 @@
 from dcs_variables import *
 from tkinter import filedialog
 from tkinter import *
-from KneeboardWriter import write_new_kneeboard
-from MonitorConfigBuilder import write_monitor_config
-from CockpitScriptsAdjust import write_init_luas
 import tkinter.messagebox
 import csv
 import os
 import ctypes.wintypes
 
+######################################################################################################################################################
+# Variable Declariation & load config + files
+######################################################################################################################################################
 # Look for folder in User\Documents, if not existent, create them
 CSIDL_PERSONAL = 5       # My Documents
 SHGFP_TYPE_CURRENT = 0   # Get current, not default value
@@ -30,30 +30,30 @@ if not os.path.isdir(user_template_path):
 try:
     from config import *
 except ModuleNotFoundError:
-    data = list()
+    condata = list()
+    condata.append("# Config Variables\n\n")
+    condata.append("first_run = True\n")
+    condata.append("dcs_Path = r'C:/Program Files/Eagle Dynamics/DCS World/'\n")
+    condata.append("savedgames_Path = r'%s/Saved Games/DCS/'\n" % user_path)
+    condata.append("\n# Viewport\n")
+    condata.append("viewport_airframe = []\n")
+    condata.append("\n# Kneeboard\n")
+    condata.append("kneeboard_enabled_airframes = []\n")
+    condata.append("kneeboard_size = {'x': 0, 'y': 0, 'width': 600, 'height': 800}\n")
 
-    data.append("# Config Variables\n\n")
-    data.append("first_run = True\n")
-    data.append("dcs_Path = r'C:/Program Files/Eagle Dynamics/DCS World/'\n")
-    data.append("savedgames_Path = r'%s/Saved Games/DCS/'\n" % user_path)
-    data.append("\n# Viewport\n")
-    data.append("viewport_airframe = []\n")
-    data.append("\n# Kneeboard\n")
-    data.append("kneeboard_enabled_airframes = []\n")
-    data.append("kneeboard_size = {'x': 0, 'y': 0, 'width': 600, 'height': 800}\n")
-
-    with open("config.py", "w", encoding="utf8") as file:
-        file.writelines(data)
+    with open("config.py", "w", encoding="utf8") as confile:
+        confile.writelines(condata)
     from config import *
 
 
-to_del = list()
 # check for old names in config
+to_del = list()
 for main_item in kneeboard_enabled_airframes:
-    if main_item not in dcs_current_airframes:
+    if main_item not in kneeboard_paths:
         to_del.append(main_item)
 for main_item in to_del:
     kneeboard_enabled_airframes.remove(main_item)
+
 
 # Variables for window size and spacing
 endrow = round(len(dcs_current_airframes) / 2) + 5
@@ -62,10 +62,12 @@ savecol = 5
 columnsize = 75
 rowsize = 25
 
+
 # Button Colors:
 button_green = "#ADFF2F"
 button_red = "#D9534F"
 button_blue = "#ADD8E6"
+
 
 # import .csv-files
 # Center Viewport
@@ -73,8 +75,8 @@ mainViewport = []
 try:
     with open(user_profile_path + "mainViewport.csv", "r", encoding="utf8") as readerfile:
         reader = csv.DictReader(readerfile)
-        for line in reader:
-            mainViewport.append(line)
+        for mvpline in reader:
+            mainViewport.append(mvpline)
 except OSError as e:
     mainViewport.append([('name', 'Center'), ('x', '0'), ('y', '0'), ('width', '1920'), ('height', '1080'), ('viewDx', '0'), ('viewDy', '0'), ('aspect', '16/9')])
 
@@ -86,13 +88,16 @@ for vp_airframe in viewport_airframe:
         with open(user_profile_path + "%s.csv" % vp_airframe, "r", encoding="utf8") as vp_file:
             reader = csv.DictReader(vp_file)
             viewports = []
-            for line in reader:
-                viewports.append(line)
+            for vpline in reader:
+                viewports.append(vpline)
             viewport_list.append({'airframe': vp_airframe, 'viewports': viewports})
     except OSError as e:
         viewport_list.append({'airframe': vp_airframe, 'viewports': []})
 
 
+######################################################################################################################################################
+# Create Windows/frames
+######################################################################################################################################################
 # Application
 class App(Tk):
     def __init__(self, *args, **kwargs):
@@ -107,7 +112,7 @@ class App(Tk):
 
         # Create Frame per subpage
         self.frames = {}
-        for F in (MainPage, DcsPage, ViewportPage, KneeboardPage):
+        for F in (MainPage, DcsPage, ViewportPage, KneeboardPage, SpecialVariablesPage):
             frame = F(container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -150,6 +155,13 @@ class MainPage(Frame):
         kneeboardconfiglabel.grid(row=8, column=0, sticky='nesw', columnspan=4)
         kneeboardconfigbutton.grid(row=9, column=0, sticky='nesw', columnspan=4)
 
+        # Specials
+        specialslabel = Label(self, text="Special Variables")
+        specialsbutton = Button(self, text="Setup Special Variables", command=lambda: controller.show_frame(SpecialVariablesPage))
+
+        specialslabel.grid(row=11, column=0, sticky='nesw', columnspan=4)
+        specialsbutton.grid(row=12, column=0, sticky='nesw', columnspan=4)
+
         # Layout
         spacer = Label(self, text="", width=10)
         for j in range(7):
@@ -166,7 +178,7 @@ class MainPage(Frame):
         patchdcsbutton.grid(row=endrow, column=4, sticky='nesw', columnspan=4)
 
         # Refresh window
-        refresh_button = Button(self, text="Restart Program", bg=button_blue, command=refresh_app)
+        refresh_button = Button(self, text="Reload Interface", bg=button_blue, command=refresh_app)
         refresh_button.grid(row=endrow-1, column=0, sticky="nesw", columnspan=4)
 
         # Quit Button
@@ -332,7 +344,7 @@ class KneeboardPage(Frame):
         col = 4
         kb_checkboxlist = {}
         kb_cb_var = {}
-        for loopairframe in dcs_current_airframes:
+        for loopairframe in kneeboard_paths:
             kb_cb_var[loopairframe] = IntVar()
             kb_checkboxlist["kbc_%s" % loopairframe] = Checkbutton(self, text=loopairframe, variable=kb_cb_var[loopairframe])
             kb_checkboxlist["kbc_%s" % loopairframe].grid(row=y_pos, column=col, sticky='w', columnspan=2)
@@ -355,6 +367,33 @@ class KneeboardPage(Frame):
 
         savechangesbutton = Button(self, text="Save changes", bg="#ADFF2F", command=lambda: kb_savechanges([kb_x_cur, kb_y_cur, kb_w_cur, kb_h_cur], kb_cb_var))
         savechangesbutton.grid(row=endrow, column=4, sticky='nesw', columnspan=4)
+
+        # Layout
+        spacer = Label(self, text="", width=10)
+        for j in range(7):
+            spacer.grid(row=endrow - 1, column=j, sticky='nesw')
+
+        # Create Spacing
+        col_count, row_count = self.grid_size()
+        for col in range(col_count):
+            self.grid_columnconfigure(col, minsize=columnsize)
+        for row in range(row_count):
+            self.grid_rowconfigure(row, minsize=rowsize)
+
+
+class SpecialVariablesPage(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+
+        # Title
+        dcslabel = Label(self, text="Special Variables")
+        dcslabel.grid(row=0, column=0, columnspan=8)
+
+        homebutton = Button(self, text="Home", bg=button_blue, command=lambda: controller.show_frame(MainPage))
+        homebutton.grid(row=endrow, column=0, sticky='nesw', columnspan=4)
+
+        # savechangesbutton = Button(self, text="save changes", bg=button_green)
+        # savechangesbutton.grid(row=endrow, column=4, sticky='nesw', columnspan=4)
 
         # Layout
         spacer = Label(self, text="", width=10)
@@ -535,7 +574,7 @@ def kb_savechanges(kneeboard, airframelist):
     kneeboardvar['width'] = kneeboard[2]['text']
     kneeboardvar['height'] = kneeboard[3]['text']
 
-    for loopairframe in dcs_current_airframes:
+    for loopairframe in kneeboard_paths:
         boolvar = airframelist[loopairframe].get()
         if boolvar == 1 and loopairframe not in kneeboard_enabled_airframes:
             kneeboard_enabled_airframes.append(loopairframe)
@@ -562,9 +601,9 @@ def kb_savechanges(kneeboard, airframelist):
         data = file.readlines()
 
     for i in range(len(data)):
-        if data[i].startswith("kneeboard_enabled_airframes = "):
+        if data[i].startswith("kneeboard_enabled_airframes ="):
             data[i] = kea_string
-        elif data[i].startswith("kneeboard_size = "):
+        elif data[i].startswith("kneeboard_size ="):
             data[i] = kbp_string
 
     with open("config.py", "w", encoding="utf8") as file:
@@ -1006,14 +1045,15 @@ def add_vp(subpage, airframe):
     vp_name_save.grid(row=2, column=3, sticky='nesw')
     fields.append(vp_name_cur)
 
-    vp_file_label = Label(add_vp_frame, text="init.lua File:")
-    vp_file_cur = Label(add_vp_frame, text="no file selected")
-    vp_file_save = Button(add_vp_frame, text="Choose", command=lambda: addviewport_choosefile(vp_file_cur, airframe, None))
+    if airframe != "Flaming Cliffs":
+        vp_file_label = Label(add_vp_frame, text="init.lua File:")
+        vp_file_cur = Label(add_vp_frame, text="no file selected")
+        vp_file_save = Button(add_vp_frame, text="Choose", command=lambda: addviewport_choosefile(vp_file_cur, airframe, None))
 
-    vp_file_label.grid(row=3, column=0, sticky='w')
-    vp_file_cur.grid(row=3, column=1, sticky='e')
-    vp_file_save.grid(row=3, column=2, sticky='nesw', columnspan=2)
-    fields.append(vp_file_cur)
+        vp_file_label.grid(row=3, column=0, sticky='w')
+        vp_file_cur.grid(row=3, column=1, sticky='e')
+        vp_file_save.grid(row=3, column=2, sticky='nesw', columnspan=2)
+        fields.append(vp_file_cur)
 
     vp_x_label = Label(add_vp_frame, text="X (hor. pos.):")
     vp_x_cur = Label(add_vp_frame, text="0")
@@ -1062,10 +1102,10 @@ def add_vp(subpage, airframe):
     spacer2 = Label(add_vp_frame, text="")
     spacer2.grid(row=8, column=0, sticky=W, columnspan=4)
 
-    save = Button(add_vp_frame, text="Save & close", bg=button_green, command=lambda window=add_vp, mother=subpage, af=airframe: addviewport_save(window, af, fields))
+    save = Button(add_vp_frame, text="Save & close", bg=button_green, command=lambda window=add_vp_window, mother=subpage, af=airframe: addviewport_save(window, mother, af, fields))
     save.grid(row=9, column=0, sticky='nesw', columnspan=4)
 
-    close = Button(add_vp_frame, text="close", bg=button_red, command=lambda window=add_vp, mother=subpage, af=airframe: close_window(window, af))
+    close = Button(add_vp_frame, text="close", bg=button_red, command=lambda window=add_vp_window, mother=subpage: close_window(window, mother))
     close.grid(row=10, column=0, sticky="NESW", columnspan=4)
 
     return
@@ -1103,19 +1143,30 @@ def addviewport_choosefile(label, airframe, viewport):
 
 
 # Save-button Add Viewport Frame
-def addviewport_save(window, airframe, fields):
-    values = [fields[0]['text'], fields[1]['text'], fields[2]['text'], fields[3]['text'], fields[4]['text'], fields[5]['text']]
+def addviewport_save(window, mother, airframe, fields):
+    if airframe != "Flaming Cliffs":
+        values = [fields[0]['text'], fields[1]['text'], fields[2]['text'], fields[3]['text'], fields[4]['text'], fields[5]['text']]
+        for vpairframe in viewport_list:
+            if vpairframe['airframe'] == airframe:
+                i = 0
+                newviewport = {}
+                for fieldvar in ['name', 'filepath', 'x', 'y', 'width', 'height']:
+                    newviewport[fieldvar] = values[i]
+                    i += 1
+                vpairframe['viewports'].append(newviewport)
 
-    for vpairframe in viewport_list:
-        if vpairframe['airframe'] == airframe:
-            i = 0
-            newviewport = {}
-            for fieldvar in ['name', 'filepath', 'x', 'y', 'width', 'height']:
-                newviewport[fieldvar] = values[i]
-                i += 1
-            vpairframe['viewports'].append(newviewport)
+    else:
+        values = [fields[0]['text'], fields[1]['text'], fields[2]['text'], fields[3]['text'], fields[4]['text']]
+        for vpairframe in viewport_list:
+            if vpairframe['airframe'] == airframe:
+                i = 0
+                newviewport = {}
+                for fieldvar in ['name', 'x', 'y', 'width', 'height']:
+                    newviewport[fieldvar] = values[i]
+                    i += 1
+                vpairframe['viewports'].append(newviewport)
 
-    close_window(window, airframe)
+    close_window(mother, window)
 
     return
 
@@ -1261,19 +1312,205 @@ def delete_viewport(viewport, af, window):
 # Check all checkboxes
 def checkall(kb_ca_var, checkboxlist):
     if kb_ca_var.get() == 1:
-        for l_airframe in dcs_current_airframes:
+        for l_airframe in kneeboard_paths:
             checkboxlist[l_airframe].set(1)
     elif kb_ca_var.get() == 0:
-        for l_airframe in dcs_current_airframes:
+        for l_airframe in kneeboard_paths:
             checkboxlist[l_airframe].set(0)
 
     return
 
 
-##################################################
-##################################################
-##################################################
+######################################################################################################################################################
+# Create / Modify / Save files functions
+######################################################################################################################################################
+# Modify device_init.luas
+def write_init_luas(vp_list):
+    for item in vp_list:
+        if item['airframe'] == "Flaming Cliffs":
+            continue
+        else:
+            airframe_name = item['airframe'].replace("-", "_").replace(" ", "_")
+
+            for port in item['viewports']:
+                # Read Data
+                file = dcs_Path + port['filepath']
+                open_file = open(file, 'r', encoding="utf8")
+                data = open_file.readlines()
+                open_file.close()
+
+                # Find Specific Lines
+                # If in exceptions
+                if port['filepath'] in vp_exceptions:
+                    if port['filepath'] == "Mods/aircraft/AV8BNA/Cockpit/MPCD/indicator/MPCD_init.lua":
+                        pos = 0
+                        for i in range(len(data)):
+                            if "if monitorpos == 'R' then" in data[i]:
+                                pos = i
+                        if pos != 0 and "RIGHT" in port['name'].upper():
+                            data[pos + 1] = '	try_find_assigned_viewport("%s_%s")\n' % (airframe_name, port['name'])
+                        elif pos != 0 and "LEFT" in port['name'].upper():
+                            data[pos + 3] = '	try_find_assigned_viewport("%s_%s")\n' % (airframe_name, port['name'])
+
+                # If normal file
+                else:
+                    vph_line = 0
+                    vpa_line = 0
+                    for i in range(len(data)):
+                        if 'dofile(LockOn_Options.common_script_path.."ViewportHandling.lua")' in data[i]:
+                            vph_line = i
+                        elif 'try_find_assigned_viewport(' in data[i]:
+                            vpa_line = i
+
+                    if vph_line <= 0:
+                        data.append('\n\ndofile(LockOn_Options.common_script_path.."ViewportHandling.lua")\n')
+                    if vpa_line <= 0:
+                        data.append('\ntry_find_assigned_viewport("%s_%s")\n' % (airframe_name, port['name']))
+                    else:
+                        data[vpa_line] = 'try_find_assigned_viewport("%s_%s")\n' % (airframe_name, port['name'])
+
+                # Write data
+                with open(file, 'w', encoding="utf8") as file2:
+                    for line in data:
+                        file2.write(line)
+
+    return
+
+
+# Create and write MonitorConfig.lua file
+def write_monitor_config(main_viewport, vp_list):
+    config_path = "Config/MonitorSetup/"
+    monitorconfig_file = dcs_Path + config_path + "monitor_config_VPM.lua"
+
+    data = list()
+    data.append("_  = function(p) return p; end;\n")
+    data.append("name = _('monitor_config_VPM');\n")
+    data.append("Description = 'Monitor-Config created by ViewportManager'\n\n")
+
+    # Write Main Viewport
+    data.append("--########################################\n")
+    data.append("-- MAIN VIEWPORT\n")
+    data.append("--########################################\n\n")
+    data.append("Viewports = \n")
+    data.append("{\n")
+    data.append("    Center =\n")
+    data.append("    {\n")
+    data.append("        x = %s;\n" % main_viewport[0]["x"])
+    data.append("        y = %s;\n" % main_viewport[0]["y"])
+    data.append("        width = %s;\n" % main_viewport[0]["width"])
+    data.append("        height = %s;\n" % main_viewport[0]["height"])
+    data.append("        viewDx = %s;\n" % main_viewport[0]["viewDx"])
+    data.append("        viewDy = %s;\n" % main_viewport[0]["viewDy"])
+    data.append("        aspect = %s;\n" % main_viewport[0]["aspect"])
+    data.append("    }\n")
+    data.append("}\n\n")
+
+    # Write Viewports per airframe
+    for item in vp_list:
+        airframe_name = item['airframe'].replace("-", "_").replace(" ", "_")
+        data.append("\n--################################################################################\n")
+        data.append("-- %s\n" % airframe_name)
+        data.append("--################################################################################\n\n")
+
+        for port in item['viewports']:
+            if item['airframe'] == "Flaming Cliffs":
+                data.append("%s =\n" % port['name'])
+            else:
+                data.append("-- %s\n" % port['filepath'])
+                data.append("%s_%s =\n" % (airframe_name, port['name']))
+            data.append("{\n")
+            data.append("    x = %s;\n" % port['x'])
+            data.append("    y = %s;\n" % port['y'])
+            data.append("    width = %s;\n" % port['width'])
+            data.append("    height = %s;\n" % port['height'])
+            data.append("}\n\n")
+
+    data.append("\n\nUIMainView = Viewports.Center")
+
+    with open(monitorconfig_file, 'w', encoding="utf8") as file:
+        for line in data:
+            file.write(line)
+
+    return
+
+
+# Modify Kneeboard files
+def write_new_kneeboard(kneeboardlist):
+
+    # Create position in new ViewportHandling.lua
+    vph_path = dcs_Path + vp_handling_path
+    file = open(vph_path, 'r', encoding="utf8")
+    vph_data = file.readlines()
+    file.close()
+
+    for i in range(len(vph_data)):
+        if 'dedicated_viewport ' in vph_data[i]:
+            vph_data[i] = '	dedicated_viewport 		  = {%s, %s, %s, %s}\n' % (kneeboard_size['x'], kneeboard_size['y'], kneeboard_size['width'], kneeboard_size['height'])
+            break
+
+    newfile = vph_path.replace("ViewportHandling.lua", "ViewportHandling_VPM.lua")
+    with open(newfile, 'w', encoding="utf8") as file2:
+        for line in vph_data:
+            file2.write(line)
+
+    # Declare changed ViewportHandling in Kneeboard_init
+    kbi_path = dcs_Path + kneeboard_init
+    file3 = open(kbi_path, 'r', encoding="utf8")
+    kbi_data = file3.readlines()
+    file3.close()
+
+    for i in range(len(kbi_data)):
+        if 'dofile(LockOn_Options.common_script_path.."ViewportHandling.lua")' in kbi_data[i]:
+            kbi_data[i] = 'dofile(LockOn_Options.common_script_path.."ViewportHandling_VPM.lua")\n'
+            break
+
+    newfile = kbi_path.replace("init.lua", "init_VPM.lua")
+    with open(newfile, 'w', encoding="utf8") as file4:
+        for line in kbi_data:
+            file4.write(line)
+
+    # Adjust to new init_VPM.lua
+    kbd_path = dcs_Path + kneeboard_declare
+    file5 = open(kbd_path, 'r', encoding="utf8")
+    kbd_data = file5.readlines()
+    file5.close()
+
+    for i in range(len(kbd_data)):
+        if '"KNEEBOARD/indicator/init.lua"' in kbd_data[i]:
+            kbd_data[i] = 'local 			init_script = LockOn_Options.common_script_path.."KNEEBOARD/indicator/init_VPM.lua"\n'
+            break
+
+    newfile = kbd_path.replace("declare_kneeboard_device.lua", "declare_kneeboard_device_VPM.lua")
+    with open(newfile, 'w', encoding="utf8") as file6:
+        for line in kbd_data:
+            file6.write(line)
+
+    # Adjust selected airframes
+    for item in kneeboardlist:
+        path = dcs_Path + kneeboard_paths[item]
+        exists = os.path.isfile(path)
+        if not exists:
+            continue
+
+        file7 = open(path, 'r', encoding="utf8")
+        data = file7.readlines()
+        file7.close()
+
+        for i in range(len(data)):
+            if 'dofile(LockOn_Options.common_script_path.."KNEEBOARD/declare_kneeboard_device.lua")' in data[i]:
+                data[i] = 'dofile(LockOn_Options.common_script_path.."KNEEBOARD/declare_kneeboard_device_VPM.lua")\n'
+                break
+
+        with open(path, 'w', encoding="utf8") as file8:
+            for line in data:
+                file8.write(line)
+
+    return
+
+
+######################################################################################################################################################
 # Build App and start mainloop()
+######################################################################################################################################################
+
 app = App()
 app.mainloop()
-
